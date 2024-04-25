@@ -1,12 +1,13 @@
 [tool.poetry]
-name = "notebooks"
+name = "voltage-current-prediction"
 version = "0.1.0"
 description = ""
 authors = ["Peng Rao <76681491+Raopend@users.noreply.github.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.10"
 jupyter = "^1.0.0"
 pandas = "^2.2.1"
 missingno = "^0.5.2"
@@ -16,6 +17,9 @@ statsmodels = "^0.14.1"
 pmdarima = "^2.0.4"
 seaborn = "^0.13.2"
 onnx = "^1.16.0"
+torch = "^2.3.0"
+lightning = "^2.2.3"
+pip = "^24.0"
 
 
 [build-system]
