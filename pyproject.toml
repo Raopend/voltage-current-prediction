@@ -2,7 +2,7 @@
 name = "voltage-current-prediction"
 version = "0.1.0"
 description = ""
-authors = ["Peng Rao <76681491+Raopend@users.noreply.github.com>"]
+authors = ["Peng Rao <raopend@gmail.com>"]
 readme = "README.md"
 package-mode = false
 
@@ -23,6 +23,14 @@ pip = "^24.0"
 torchinfo = "^1.8.0"
 tensorboard = "^2.16.2"
 rich = "^13.7.1"
+scikit-learn = "^1.4.2"
+fastapi = "^0.110.2"
+uvicorn = "^0.29.0"
+sqlalchemy = "^2.0.29"
+pydantic = "^2.7.1"
+websockets = "^12.0"
+cryptography = "^42.0.5"
+nbdime = "^4.0.1"
 
 
 [build-system]
