@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from dependencies import get_db_session
 from fastapi import APIRouter, Depends
-from models import EquipmentState, TimeInterval
+from models.equipment import EquipmentState, TimeInterval
 from pydantic import BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session

@@ -4135,6 +4135,21 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sqlmodel"
+version = "0.0.18"
+description = "SQLModel, SQL databases in Python, designed for simplicity, compatibility, and robustness."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "sqlmodel-0.0.18-py3-none-any.whl", hash = "sha256:d70fdf8fe595e30a918660cf4537b9c5fc2fffdbfcba851a0135de73c3ebcbb7"},
+    {file = "sqlmodel-0.0.18.tar.gz", hash = "sha256:2e520efe03810ef2c268a1004cfc5ef8f8a936312232f38d6c8e62c11af2cac3"},
+]
+
+[package.dependencies]
+pydantic = ">=1.10.13,<3.0.0"
+SQLAlchemy = ">=2.0.0,<2.1.0"
+
+[[package]]
 name = "stack-data"
 version = "0.6.3"
 description = "Extract data from python stack frames and tracebacks for informative displays"
@@ -4872,4 +4887,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "c7b0f799c5f6b3174d63079d4fa6b587634229cce91a821f579960d5cf5eba8b"
+content-hash = "83821b24ebb292cb09e299bef234c5e0457b4c331582787e2595f58850be5772"

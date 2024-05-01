@@ -1,5 +1,4 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import Session, SQLModel, create_engine
 
 
 class MySQLSession:
@@ -25,9 +24,8 @@ class MySQLSession:
     def get_db_session(cls):
         try:
             engine = cls.get_db_connection()
-            Session = sessionmaker(engine)
-            session = Session()
-            return session
+            SQLModel.metadata.create_all(engine)
+            return Session(engine)
         except Exception as e:
             print("Error getting DB session:", e)
             return None

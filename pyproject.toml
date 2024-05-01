@@ -31,8 +31,7 @@ pydantic = "^2.7.1"
 websockets = "^12.0"
 cryptography = "^42.0.5"
 nbdime = "^4.0.1"
-sktime = "^0.28.1"
-
+sqlmodel = "^0.0.18"
 
 [build-system]
 requires = ["poetry-core"]
