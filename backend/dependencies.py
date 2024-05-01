@@ -17,6 +17,7 @@ class MySQLSession:
             pool_recycle=cls.POOL_RECYCLE,
             pool_timeout=cls.POOL_TIMEOUT,
             max_overflow=cls.MAX_OVERFLOW,
+            echo=True,
         )
         return engine
 
