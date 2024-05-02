@@ -23,6 +23,7 @@ class UserBase(SQLModel):
     alert_option: str
     token: str
     notes: str
+    created_at: datetime
 
 
 class UserCreate(UserBase):

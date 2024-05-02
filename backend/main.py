@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import state, user
+from routers import predict, state, user
 
 app = FastAPI()
 
@@ -17,6 +17,7 @@ app.add_middleware(
 
 app.include_router(state.router)
 app.include_router(user.router)
+app.include_router(predict.router)
 
 
 if __name__ == "__main__":
