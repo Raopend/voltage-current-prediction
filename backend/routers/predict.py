@@ -44,9 +44,9 @@ def predict(data: TimeSeriesFeatures) -> PredictedResult:
     )
 
 
-@router.post("/predict")
+@router.get("/predict")
 def post_predict(db: Session = Depends(get_db_session)):
-    # 查询最近300分钟内的数据
+    # 查询最近75分钟内的数据
     current_time = datetime.now() - relativedelta(years=2)
     fifteen_min_ago = current_time - timedelta(minutes=75)
     data = (
@@ -56,7 +56,10 @@ def post_predict(db: Session = Depends(get_db_session)):
         .all()
     )
     Ia = [d.Ia for d in data]
+    collection_time = [d.collection_time for d in data]
+    collection_time.append(current_time.strftime("%Y-%m-%d %H:%M:%S"))
     return {
+        "collection_time": collection_time,
         "sequence": Ia,
         "predicted": predict(TimeSeriesFeatures(sequence=Ia)).predicted,
     }
