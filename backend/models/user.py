@@ -13,7 +13,7 @@ class User(SQLModel, table=True):
     alert_option: str
     token: str
     notes: str
-    created_at: datetime = Field(default=datetime.now())
+    created_at: datetime | None = Field(default=datetime.now())
 
 
 class UserBase(SQLModel):
@@ -23,7 +23,6 @@ class UserBase(SQLModel):
     alert_option: str
     token: str
     notes: str
-    created_at: datetime
 
 
 class UserCreate(UserBase):

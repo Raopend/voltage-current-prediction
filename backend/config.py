@@ -1,4 +1,3 @@
 import os
 
-MODEL_PATH = os.getenv("MODEL_PATH", "notebook/model/multi_output_lstm.onnx")
- 
+MODEL_PATH = os.getenv("MODEL_PATH", "notebook/model/lstm_12_step.onnx")

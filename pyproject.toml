@@ -32,6 +32,7 @@ websockets = "^12.0"
 cryptography = "^42.0.5"
 nbdime = "^4.0.1"
 sqlmodel = "^0.0.18"
+apscheduler = "^3.10.4"
 
 [build-system]
 requires = ["poetry-core"]
