@@ -1,10 +1,8 @@
 from datetime import datetime, timedelta
 
-import onnxruntime as rt
-from config import MODEL_PATH
 from datamodel import PredictedResult, TimeSeriesFeatures
 from dateutil.relativedelta import relativedelta
-from dependencies import get_db_session
+from dependencies import get_db_session, get_onnx_session
 from fastapi import APIRouter, Depends
 from sqlalchemy import Column, DateTime, Double, Integer
 from sqlalchemy.ext.declarative import declarative_base
@@ -30,12 +28,12 @@ class EquipmentState(Base):
 
 
 router = APIRouter()
-session = rt.InferenceSession(MODEL_PATH)
-input_name = session.get_inputs()[0].name
-label_name = session.get_outputs()[0].name
 
 
-def predict(data: TimeSeriesFeatures) -> PredictedResult:
+def predict(data: TimeSeriesFeatures, model_path: str) -> PredictedResult:
+    session = get_onnx_session(model_path=model_path)
+    input_name = session.get_inputs()[0].name
+    label_name = session.get_outputs()[0].name
     predicted = session.run(
         output_names=[label_name], input_feed={input_name: data.to_numpy()}
     )
@@ -44,8 +42,8 @@ def predict(data: TimeSeriesFeatures) -> PredictedResult:
     )
 
 
-@router.get("/predict")
-def post_predict(db: Session = Depends(get_db_session)):
+@router.get("/predict_I")
+def post_predict_I(db: Session = Depends(get_db_session)):
     # 查询最近300分钟内的数据
     current_time = datetime.now() - relativedelta(years=2)
     fifteen_min_ago = current_time - timedelta(minutes=180)
@@ -67,5 +65,38 @@ def post_predict(db: Session = Depends(get_db_session)):
         "Ia": Ia,
         "Ib": Ib,
         "Ic": Ic,
-        "predicted": predict(TimeSeriesFeatures(sequence=Ia)).predicted,
+        "predicted": predict(
+            TimeSeriesFeatures(sequence=Ia),
+            model_path="notebook/model/lstm_12_step.onnx",
+        ).predicted,
+    }
+
+
+@router.get("/predict_U")
+def post_predict_U(db: Session = Depends(get_db_session)):
+    # 查询最近300分钟内的数据
+    current_time = datetime.now() - relativedelta(years=2)
+    fifteen_min_ago = current_time - timedelta(minutes=180)
+    data = (
+        db.query(EquipmentState)
+        .filter(EquipmentState.collection_time >= fifteen_min_ago)
+        .filter(EquipmentState.collection_time <= current_time)
+        .all()
+    )
+    Ua = [d.Ua for d in data]
+    Ub = [d.Ub for d in data]
+    Uc = [d.Uc for d in data]
+    collection_time = [d.collection_time for d in data]
+    collection_time.append(
+        (current_time + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+    )
+    return {
+        "collection_time": collection_time,
+        "Ua": Ua,
+        "Ub": Ub,
+        "Uc": Uc,
+        "predicted": predict(
+            TimeSeriesFeatures(sequence=Ua),
+            model_path="notebook/model/lstm_12_step_Ua.onnx",
+        ).predicted,
     }

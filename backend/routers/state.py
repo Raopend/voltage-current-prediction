@@ -87,6 +87,10 @@ async def get_equipment_I_trend(
     results = query.all()
     # 将查询结果转换为字典列表, 使用 EquipmentState.__table__.columns.keys() 获取所有列名，不要 id
     results = [dict(zip(["collection_time", "Ia", "Ib", "Ic"], row)) for row in results]
+    # 将数值保留两位小数
+    for result in results:
+        for key in ["Ia", "Ib", "Ic"]:
+            result[key] = round(result[key], 2)
     return results
 
 
@@ -118,4 +122,8 @@ async def get_equipment_U_trend(
     results = query.all()
     # 将查询结果转换为字典列表, 使用 EquipmentState.__table__.columns.keys() 获取所有列名，不要 id
     results = [dict(zip(["collection_time", "Ua", "Ub", "Uc"], row)) for row in results]
+    # 将数值保留两位小数
+    for result in results:
+        for key in ["Ua", "Ub", "Uc"]:
+            result[key] = round(result[key], 2)
     return results

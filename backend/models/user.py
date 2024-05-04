@@ -30,7 +30,7 @@ class UserCreate(UserBase):
 
 
 class UserRead(UserBase):
-    id: int
+    created_at: datetime | None = Field(default=datetime.now())
 
 
 class UserUpdate(UserBase):

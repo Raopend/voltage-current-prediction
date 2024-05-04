@@ -1,3 +1,4 @@
+import onnxruntime as rt
 from sqlmodel import Session, SQLModel, create_engine
 
 
@@ -34,3 +35,8 @@ class MySQLSession:
 
 def get_db_session():
     return MySQLSession.get_db_session()
+
+
+def get_onnx_session(model_path: str):
+    session = rt.InferenceSession(model_path)
+    return session

@@ -1,6 +1,7 @@
 import warnings
 
 import lightning.pytorch as pl
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
@@ -10,6 +11,8 @@ from pytorch_forecasting import TimeSeriesDataSet
 from pytorch_lightning.loggers import TensorBoardLogger
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+from sktime.split import temporal_train_test_split
+from sktime.utils.plotting import plot_series
 
 warnings.filterwarnings("ignore")
 
@@ -176,22 +179,38 @@ class LSTMModel(pl.LightningModule):
 if __name__ == "__main__":
     # 选取一天内数据观察
     df = pd.read_csv(
-        "../data/dnaq_15s_interval.csv",
+        "data/dnaq_15s_interval.csv",
         parse_dates=["collection_time"],
         index_col="collection_time",
     )
+    y = df[["Ia", "Ib", "Ic", "Ua", "Ub", "Uc"]]
     df = df.loc["2022-01-01":"2022-01-01"]
     datamodule = UnivariateSeriesDataModule(
         df, n_lags=5, horizon=5, feature_name="Ia", batch_size=32
     )
-    model = LSTMModel(input_dim=1, hidden_dim=64, num_layers=2, output_dim=1)
+    model = LSTMModel(input_dim=1, hidden_dim=128, num_layers=2, output_dim=1)
     pl.seed_everything(42)
     logger = TensorBoardLogger("lightning_logs", name="voltage-prediction")
     trainer = pl.Trainer(
         logger=logger,
-        max_epochs=100,
+        max_epochs=500,
         accelerator="cpu",
     )
     trainer.fit(model=model, datamodule=datamodule)
     trainer.test(model=model, datamodule=datamodule)
     trainer.validate(model=model, datamodule=datamodule)
+    prediction = trainer.predict(model=model, datamodule=datamodule)
+    prediction = np.concatenate(prediction)
+    prediction = prediction.flatten()
+    y_train, y_test = temporal_train_test_split(y["Ia"], test_size=0.2)
+    y_test = y_test.iloc[: len(prediction)]
+    y_pred = pd.Series(prediction, index=y_test.index)
+    model.eval()
+    torch.onnx.export(
+        model,
+        torch.randn(1, 12, 1),
+        "notebook/model/lstm_12_step_Ia.onnx",
+        export_params=True,
+    )
+    fig = plot_series(y_train, y_test, y_pred, labels=["y_train", "y_test", "y_pred"])
+    plt.show()

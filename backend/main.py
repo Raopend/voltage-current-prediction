@@ -45,55 +45,72 @@ def send_batch_alert():
         # 获取用户 options
         alert_options = str(u.alert_option).split(",")
         if "Ua" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Ua_sequence)).predicted
-                > average_Ua
-            ):
+            # 计算预测值
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Ua_sequence),
+                model_path="notebook/model/lstm_12_step_Ua.onnx",
+            ).predicted
+            if res > average_Ua:
                 send_alert(
-                    title="Ua 值异常", content=f"Ua 值为 {data.Ua}", token=u.token
+                    title="Ua 值异常",
+                    content=f"预计 15 分钟后 Ua 值为 {res}",
+                    token=u.token,
                 )
-        elif "Ub" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Ub_sequence)).predicted
-                > average_Ub
-            ):
+        if "Ub" in alert_options:
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Ub_sequence),
+                model_path="notebook/model/lstm_12_step_Ua.onnx",
+            ).predicted
+            if res > average_Ub:
                 send_alert(
-                    title="Ub 值异常", content=f"Ub 值为 {data.Ub}", token=u.token
+                    title="Ub 值异常",
+                    content=f"预计 15 分钟后 Ub 值为 {res}",
+                    token=u.token,
                 )
-        elif "Uc" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Uc_sequence)).predicted
-                > average_Uc
-            ):
+        if "Uc" in alert_options:
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Uc_sequence),
+                model_path="notebook/model/lstm_12_step_Ua.onnx",
+            ).predicted
+            if res > average_Uc:
                 send_alert(
-                    title="Uc 值异常", content=f"Uc 值为 {data.Uc}", token=u.token
+                    title="Uc 值异常",
+                    content=f"预计 15 分钟后 Uc 值为 {res}",
+                    token=u.token,
                 )
-        elif "Ia" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Ia_sequence)).predicted
-                > average_Ia
-            ):
+        if "Ia" in alert_options:
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Ia_sequence),
+                model_path="notebook/model/lstm_12_step.onnx",
+            ).predicted
+            if res > average_Ia:
                 send_alert(
-                    title="Ia 值异常", content=f"Ia 值为 {data.Ia}", token=u.token
+                    title="Ia 值异常",
+                    content=f"预计 15 分钟后 Ia 值为 {res}",
+                    token=u.token,
                 )
-        elif "Ib" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Ib_sequence)).predicted
-                > average_Ib
-            ):
+        if "Ib" in alert_options:
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Ib_sequence),
+                model_path="notebook/model/lstm_12_step.onnx",
+            ).predicted
+            if res > average_Ib:
                 send_alert(
-                    title="Ib 值异常", content=f"Ib 值为 {data.Ib}", token=u.token
+                    title="Ib 值异常",
+                    content=f"预计 15 分钟后 Ib 值为 {res}",
+                    token=u.token,
                 )
-        elif "Ic" in alert_options:
-            if (
-                predict.predict(TimeSeriesFeatures(sequence=Ic_sequence)).predicted
-                > average_Ic
-            ):
+        if "Ic" in alert_options:
+            res = predict.predict(
+                TimeSeriesFeatures(sequence=Ic_sequence),
+                model_path="notebook/model/lstm_12_step.onnx",
+            ).predicted
+            if res > average_Ic:
                 send_alert(
-                    title="Ic 值异常", content=f"Ic 值为 {data.Ic}", token=u.token
+                    title="Ic 值异常",
+                    content=f"预计 15 分钟后 Ic 值为 {res}",
+                    token=u.token,
                 )
-        else:
-            pass
 
 
 @asynccontextmanager
