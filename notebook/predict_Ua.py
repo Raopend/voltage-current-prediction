@@ -26,7 +26,7 @@ class UnivariateSeriesDataModule(pl.LightningDataModule):
         test_size: float = 0.2,
         batch_size: int = 16,
         feature_name: str = "",
-    ) -> None:
+    ):
         super().__init__()
         self.data = data
         self.n_lags = n_lags
@@ -135,7 +135,6 @@ class LSTMModel(pl.LightningModule):
         self.dropout = nn.Dropout(0.2)
         self.fc1 = nn.Linear(in_features=hidden_dim, out_features=16)
         self.fc2 = nn.Linear(in_features=16, out_features=output_dim)
-        self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         out, _ = self.lstm(x)
@@ -143,7 +142,6 @@ class LSTMModel(pl.LightningModule):
         out = self.dropout(out)
         out = self.fc1(out)
         out = self.fc2(out)
-        out = self.sigmoid(out)
         return out
 
     def training_step(self, batch, batch_idx):
@@ -188,9 +186,9 @@ if __name__ == "__main__":
     y = df[["Ia", "Ib", "Ic", "Ua", "Ub", "Uc"]]
     df = df.loc["2022-01-01":"2022-01-20"]
     datamodule = UnivariateSeriesDataModule(
-        df, n_lags=12, horizon=1, feature_name="Ia", batch_size=64
+        df, n_lags=5, horizon=5, feature_name="Ua", batch_size=32
     )
-    model = LSTMModel(input_dim=1, hidden_dim=64, num_layers=2, output_dim=1)
+    model = LSTMModel(input_dim=1, hidden_dim=128, num_layers=2, output_dim=1)
     pl.seed_everything(42)
     logger = TensorBoardLogger("lightning_logs", name="voltage-prediction")
     trainer = pl.Trainer(
@@ -204,14 +202,14 @@ if __name__ == "__main__":
     prediction = trainer.predict(model=model, datamodule=datamodule)
     prediction = np.concatenate(prediction)
     prediction = prediction.flatten()
-    y_train, y_test = temporal_train_test_split(y["Ia"], test_size=0.2)
+    y_train, y_test = temporal_train_test_split(y["Ua"], test_size=0.2)
     y_test = y_test.iloc[: len(prediction)]
     y_pred = pd.Series(prediction, index=y_test.index)
     model.eval()
     torch.onnx.export(
         model,
         torch.randn(1, 12, 1),
-        "notebook/model/lstm_12_step_Ia.onnx",
+        "notebook/model/lstm_12_step_Ua.onnx",
         export_params=True,
     )
     fig = plot_series(y_train, y_test, y_pred, labels=["y_train", "y_test", "y_pred"])
