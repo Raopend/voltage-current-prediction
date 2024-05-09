@@ -55,6 +55,10 @@ async def get_equipment_state(
         data = data[0].__dict__ if data else {}
         if data:
             data.pop("_sa_instance_state", None)
+        # 将数值保留两位小数
+        for key in ["Ia", "Ib", "Ic", "Ua", "Ub", "Uc", "elec_degree", "P", "COS"]:
+            if key in data:
+                data[key] = round(data[key], 2)
         await websocket.send_json({"data": data})
         await asyncio.sleep(10)
 
