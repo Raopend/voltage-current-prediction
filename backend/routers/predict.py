@@ -12,7 +12,7 @@ Base = declarative_base()
 
 
 class EquipmentState(Base):
-    __tablename__ = "dnaq_15Min_interval"
+    __tablename__ = "dnaq_1Min_interval"
 
     id = Column(Integer, primary_key=True)
     Ia = Column(Double)
@@ -44,9 +44,9 @@ def predict(data: TimeSeriesFeatures, model_path: str) -> PredictedResult:
 
 @router.get("/predict_I")
 def post_predict_I(db: Session = Depends(get_db_session)):
-    # 查询最近300分钟内的数据
+    # 查询最近1分钟内的数据
     current_time = datetime.now() - relativedelta(years=2)
-    fifteen_min_ago = current_time - timedelta(minutes=180)
+    fifteen_min_ago = current_time - timedelta(minutes=12)
     data = (
         db.query(EquipmentState)
         .filter(EquipmentState.collection_time >= fifteen_min_ago)
@@ -58,7 +58,7 @@ def post_predict_I(db: Session = Depends(get_db_session)):
     Ic = [d.Ic for d in data]
     collection_time = [d.collection_time for d in data]
     collection_time.append(
-        (current_time + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+        (current_time + timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S")
     )
     return {
         "collection_time": collection_time,
@@ -76,7 +76,7 @@ def post_predict_I(db: Session = Depends(get_db_session)):
 def post_predict_U(db: Session = Depends(get_db_session)):
     # 查询最近300分钟内的数据
     current_time = datetime.now() - relativedelta(years=2)
-    fifteen_min_ago = current_time - timedelta(minutes=180)
+    fifteen_min_ago = current_time - timedelta(minutes=12)
     data = (
         db.query(EquipmentState)
         .filter(EquipmentState.collection_time >= fifteen_min_ago)
@@ -88,7 +88,7 @@ def post_predict_U(db: Session = Depends(get_db_session)):
     Uc = [d.Uc for d in data]
     collection_time = [d.collection_time for d in data]
     collection_time.append(
-        (current_time + timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
+        (current_time + timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M:%S")
     )
     return {
         "collection_time": collection_time,

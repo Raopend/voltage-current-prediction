@@ -116,7 +116,7 @@ def send_batch_alert():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     scheduler = BackgroundScheduler()
-    scheduler.add_job(send_batch_alert, "interval", seconds=10)
+    scheduler.add_job(send_batch_alert, "interval", seconds=60)
     scheduler.start()
     yield
     scheduler.shutdown()
