@@ -30,15 +30,24 @@ class EquipmentState(Base):
 router = APIRouter()
 
 
-def predict(data: TimeSeriesFeatures, model_path: str) -> PredictedResult:
+def predict(
+    data: TimeSeriesFeatures, model_path: str, scaler_max=1, scaler_min=0
+) -> PredictedResult:
     session = get_onnx_session(model_path=model_path)
     input_name = session.get_inputs()[0].name
     label_name = session.get_outputs()[0].name
     predicted = session.run(
-        output_names=[label_name], input_feed={input_name: data.to_numpy()}
+        output_names=[label_name],
+        input_feed={
+            input_name: data.to_numpy(scaler_max=scaler_max, scaler_min=scaler_min)
+        },
     )
     return PredictedResult(
-        **{"predicted": PredictedResult.transform(predicted[0][0][0])}
+        **{
+            "predicted": PredictedResult.transform(
+                predicted[0][0][0], scaler_max=scaler_max, scaler_min=scaler_min
+            )
+        }
     )
 
 
@@ -68,6 +77,9 @@ def post_predict_I(db: Session = Depends(get_db_session)):
         "predicted": predict(
             TimeSeriesFeatures(sequence=Ia),
             model_path="notebook/model/lstm_12_step.onnx",
+            # scaler_max, scaler_min 分别对应训练数据的最大最小值, Ia
+            scaler_max=373,
+            scaler_min=0,
         ).predicted,
     }
 
@@ -98,5 +110,8 @@ def post_predict_U(db: Session = Depends(get_db_session)):
         "predicted": predict(
             TimeSeriesFeatures(sequence=Ua),
             model_path="notebook/model/lstm_12_step_Ua.onnx",
+            # scaler_max, scaler_min 分别对应训练数据的最大最小值, Ua
+            scaler_max=373,
+            scaler_min=0,
         ).predicted,
     }
