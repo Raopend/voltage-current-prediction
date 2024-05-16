@@ -4,6 +4,7 @@ from datamodel import PredictedResult, TimeSeriesFeatures
 from dateutil.relativedelta import relativedelta
 from dependencies import get_db_session, get_onnx_session
 from fastapi import APIRouter, Depends
+from lacheck import Get_detect_data
 from sqlalchemy import Column, DateTime, Double, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
@@ -114,4 +115,18 @@ def post_predict_U(db: Session = Depends(get_db_session)):
             scaler_max=373,
             scaler_min=0,
         ).predicted,
+    }
+
+
+@router.get("/check_U")
+def check_U():
+    data_path = "/Users/raopend/Workspace/voltage-current-prediction/backend/data/dnaq_history_data_2022_ext2.csv"
+    model_path = "/Users/raopend/Workspace/voltage-current-prediction/backend/data/kmeans_model.joblib"
+    X_test_original, distances, mean, std = Get_detect_data(data_path, model_path)
+    electricList = X_test_original.tolist()
+    return {
+        "electricList": electricList,
+        "distances": distances,
+        "mean": mean,
+        "std": std,
     }

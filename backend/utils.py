@@ -1,9 +1,5 @@
 import numpy as np
 
-scaler_min = 0
-scaler_max = 240.0
-
-
 class MinMaxScaler:
     def __init__(self, scaler_min: float, scaler_max: float):
         self.scaler_min = scaler_min
