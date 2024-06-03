@@ -91,6 +91,12 @@ async def get_equipment_I_trend(
     results = query.all()
     # 将查询结果转换为字典列表, 使用 EquipmentState.__table__.columns.keys() 获取所有列名，不要 id
     results = [dict(zip(["collection_time", "Ia", "Ib", "Ic"], row)) for row in results]
+    # collection_time 转化为字符串，添加两年
+    for result in results:
+        result["collection_time"] = (
+            datetime.strptime(result["collection_time"], time_format)
+            + relativedelta(years=2)
+        ).strftime(time_format)
     # 将数值保留两位小数
     for result in results:
         for key in ["Ia", "Ib", "Ic"]:
